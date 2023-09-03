@@ -1,5 +1,5 @@
 import pymysql
-from db_tool import DBTool,DBSetting
+from db_basic import DBSetting, DBTool
 
 host='sh-cynosdbmysql-grp-m2wxrd22.sql.tencentcdb.com'
 # host='localhost'

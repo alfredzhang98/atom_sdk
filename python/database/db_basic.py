@@ -43,7 +43,6 @@ class DBSetting:
         except Exception as e:
             print("Error:", e)
 
-
 class DBTool:
     def __init__(self, host, port, user, password, database, tableName):
         self.connection = self._get_connection(host, port, user, password, database)
