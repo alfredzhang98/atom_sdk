@@ -3,7 +3,7 @@ from operator import length_hint
 
 
 # 数组内部一定数量的元组，根据target结果进行求和，返回结果
-class ArraySumUtils:
+class ArraySum:
 
     # 一个整数数组和一个目标值，函数通过在数组中找到两个数，使得它们的和等于目标值，并返回这两个数在数组中的索引
     # 暴力解法

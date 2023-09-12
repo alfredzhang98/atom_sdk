@@ -3,7 +3,6 @@ import random
 
 
 class GenerateData:
-
     # 根据seed 
     def generateArrayRandomBySeed(min_value, max_value, num, seed):
         random.seed(seed)  # 设置随机数种子

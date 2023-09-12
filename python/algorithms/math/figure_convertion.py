@@ -1,7 +1,7 @@
 import math
 
 
-class NFigureConversion:
+class FigureConversion:
         
     def transDecimaltoFractional(input):
         str_bin = (bin(input))

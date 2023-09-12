@@ -1,14 +1,14 @@
 import pymysql
 from db_basic import DBSetting, DBTool
 
-host='sh-cynosdbmysql-grp-m2wxrd22.sql.tencentcdb.com'
+host='xxx.com'
 # host='localhost'
 port = 24486
 user='root'
-password='ZQY201613886f-'
+password='xxxx'
 database='TEST'
 
-tableName = 'psy_exp_01'
+tableName = 'xxx'
 
 create_table_trigger_sql = """
 CREATE TABLE {table_name} (
@@ -33,24 +33,24 @@ def get_id(data):
     return int(data[-1][0])
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
     # dbset =  DBSetting(host, port, user, password, database)
     # if dbset.databse_exists() == False:
     #     dbset.create_database()
 
 
-    dbtool = DBTool(host, port, user, password, database, tableName)
+    # dbtool = DBTool(host, port, user, password, database, tableName)
 
     # if dbtool.table_exists() == False:
     #     dbtool.create_table(create_table_trigger_sql)
     # dbtool.insert_data(insert_data_query, sample_data[2])
 
-    data = dbtool.read_all_data()
-    id =  get_id(data)
-    print(id)
+    # data = dbtool.read_all_data()
+    # id =  get_id(data)
+    # print(id)
 
-    data = dbtool.read_enum_count('gender', 'men')
-    print(data)
+    # data = dbtool.read_enum_count('gender', 'men')
+    # print(data)
 
-    dbtool.close_connection()
+    # dbtool.close_connection()

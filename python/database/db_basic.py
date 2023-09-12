@@ -43,6 +43,17 @@ class DBSetting:
         except Exception as e:
             print("Error:", e)
 
+    def close_connection(self):
+        try:
+            if self.cursor:
+                self.cursor.close()
+                self.cursor = None
+            if self.connection:
+                self.connection.close()
+                self.connection = None
+        except Exception as e:
+            print("Error:", e)
+
 class DBTool:
     def __init__(self, host, port, user, password, database, tableName):
         self.connection = self._get_connection(host, port, user, password, database)
@@ -72,7 +83,6 @@ class DBTool:
         cursor = self.connection.cursor()
         return cursor
             
-
     def table_exists(self):
         try:
             self.cursor.execute(f"SHOW TABLES LIKE '{self.tableName}'")
@@ -89,6 +99,15 @@ class DBTool:
         except Exception as e:
             print("Error:", e)
 
+    # This depends on the element of your table.
+    # insert_data_query = "INSERT INTO {table_name}  (name, gender, age, experiment_date, note) VALUES (%s, %s, %s, %s, %s)".format(table_name = tableName)
+    # sample_data = [
+    #     ("Alice", "Women", 25, "2023-08-19", "Sample note 1"),
+    #     ("Bob", "Men", 30, "2023-08-20", "Sample note 2"),
+    #     ("Charlie", "Others", 40, "2023-08-21", "Sample note 3"),
+    # ]
+    # dbtool.insert_data(insert_data_query, sample_data[2])
+
     def insert_data(self,data_query,data):
         try:
             self.cursor.execute(data_query,data)
@@ -97,7 +116,7 @@ class DBTool:
         except Exception as e:
             print("Error:", e)
 
-
+    # db commend by user
     def user_read_free(self,sql):
         try:
             self.cursor.execute(sql)
@@ -183,8 +202,10 @@ class DBTool:
         try:
             if self.cursor:
                 self.cursor.close()
+                self.cursor = None
             if self.connection:
                 self.connection.close()
+                self.connection = None
         except Exception as e:
             print("Error:", e)
 
