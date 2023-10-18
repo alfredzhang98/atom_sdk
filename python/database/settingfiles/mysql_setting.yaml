@@ -1,0 +1,8 @@
+version: 0.1
+host: 'xxx'
+localhost: 'localhost'
+port: "xxx"
+user: 'xxx'
+password: 'xxx'
+database: 'TEST'
+tableName: 'TEST1'

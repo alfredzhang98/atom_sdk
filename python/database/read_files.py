@@ -1,4 +1,8 @@
+import os
 import yaml
+
+current_dir = os.path.dirname(__file__)
+relative_path = os.path.join(current_dir, "settingfiles/mysql_setting.yaml")
 
 class ReadFiles:
 
@@ -29,7 +33,7 @@ class ReadFiles:
 
 if __name__ == "__main__":
     u_ReadFiles = ReadFiles()
-    u_readyaml = u_ReadFiles.ReadYAML("/Users/alfred/project/atom_sdk/python/crawler/slot_config.yaml")
-    print(type(u_readyaml.get_value("CENTER1")))
-    print(u_readyaml.get_value("CENTER1"))
+    u_readyaml = u_ReadFiles.ReadYAML(relative_path)
+    print(type(u_readyaml.get_value("host")))
+    print(u_readyaml.get_value("password"))
     print(u_readyaml.get_value())
