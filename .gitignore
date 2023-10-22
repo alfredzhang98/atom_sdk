@@ -1,5 +1,8 @@
 # Compiled source #
 ###################
+*.key
+
+###################
 *.com
 *.class
 *.dll
