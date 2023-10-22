@@ -34,24 +34,25 @@ class EncryptionTools:
             f = Fernet(key)
             decrypted_data = f.decrypt(encrypted_data)
             return decrypted_data.decode('utf-8')
-        
 
-# EncryptionTools.AES.generate_key("DBkey")
 
-# aes = EncryptionTools.AES(None, "DBkey")
-# t1 = aes.encrypt_data("dev_0000", aes.load_key())
-# print(t1)
-# t2 = aes.decrypt_data(t1, aes.load_key())
-# print(t2)
+# if __name__ == "__main__":
+    # EncryptionTools.AES.generate_key("DBkey")
 
-# dev_0000
-# gAAAAABlNTlQ-8YqGQX1E82rgds9jbrJ27HCMBNYBMhWsBx2pyexYFVJk20kTdxe1UEiRGKlzpt1s7flsDb70be0siNAkEP0uA==
+    # aes = EncryptionTools.AES(None, "DBkey")
+    # t1 = aes.encrypt_data("dev_0000", aes.load_key())
+    # print(t1)
+    # t2 = aes.decrypt_data(t1, aes.load_key())
+    # print(t2)
 
-# worldangle0001-
-# gAAAAABlNTdMhFm1lGapkW0yaLAvAPTaz0JVGMzSu02CQTFjiLj8J5G39GHvd_ctC17hWJzCD8hFSp04VLiYQQyT8TxHE1kOAQ==
+    # dev_0000
+    # gAAAAABlNTlQ-8YqGQX1E82rgds9jbrJ27HCMBNYBMhWsBx2pyexYFVJk20kTdxe1UEiRGKlzpt1s7flsDb70be0siNAkEP0uA==
 
-# sh-cynosdbmysql-grp-hva70gqc.sql.tencentcdb.com
-# gAAAAABlNTkTy3dJFhqpVQv27wG9hz5iMxnq-aH1YNmQRSdHNcJo97TIdFyGjGknAgy5DHUr4Wy22rG_q0opGm2h6Z_TnWFaUiXdXCdq4g6QV_CfuJ1G2b7wNVhs-pUYHsCZr5uyY9eG
+    # worldangle0001-
+    # gAAAAABlNTdMhFm1lGapkW0yaLAvAPTaz0JVGMzSu02CQTFjiLj8J5G39GHvd_ctC17hWJzCD8hFSp04VLiYQQyT8TxHE1kOAQ==
 
-# 23474
-# gAAAAABlNTkzg_hAaDadmZPAGi0v_S5s6Z-VU8c4pucJGh3V9msbqSn4wa4wV83qjKCnNGFDxbP7NQ62b4MxKtgRSgAA9KX8lQ==
+    # sh-cynosdbmysql-grp-hva70gqc.sql.tencentcdb.com
+    # gAAAAABlNTkTy3dJFhqpVQv27wG9hz5iMxnq-aH1YNmQRSdHNcJo97TIdFyGjGknAgy5DHUr4Wy22rG_q0opGm2h6Z_TnWFaUiXdXCdq4g6QV_CfuJ1G2b7wNVhs-pUYHsCZr5uyY9eG
+
+    # 23474
+    # gAAAAABlNTkzg_hAaDadmZPAGi0v_S5s6Z-VU8c4pucJGh3V9msbqSn4wa4wV83qjKCnNGFDxbP7NQ62b4MxKtgRSgAA9KX8lQ==
