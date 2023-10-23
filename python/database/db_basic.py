@@ -371,8 +371,70 @@ class DBTool:
         except Exception as e:
             print("Error:", e)
 
-# if __name__ == "__main__":
+import os
+import sys
+from read_files import ReadFiles
+sys.path.insert(0, sys.path[0]+"\\..\\")
+from encryption.encryption_tool import EncryptionTools
 
+if __name__ == "__main__":
+
+    # 读取yaml文件
+    # 拿到Key进行解析
+    # 链接数据库
+    # 增删改查
+
+    # current_dir = os.path.dirname(__file__)
+    # relative_path = os.path.join(current_dir, "settingfiles/mysql_setting_remote.yaml")
+    # u_ReadFiles1 = ReadFiles()
+    # u_readyaml1 = u_ReadFiles1.ReadYAML(relative_path)
+
+    # aes = EncryptionTools.AES(current_dir, "DBkey")
+    # host_remote = aes.decrypt_data(u_readyaml1.get_value("host"), aes.load_key())
+    # port_remote = aes.decrypt_data(u_readyaml1.get_value("port"), aes.load_key())
+    # user_remote = aes.decrypt_data(u_readyaml1.get_value("user"), aes.load_key())
+    # password_remote = aes.decrypt_data(u_readyaml1.get_value("password"), aes.load_key())
+    # database_remote = u_readyaml1.get_value("database")
+    # tableName_remote = u_readyaml1.get_value("tableName")
+
+    # print(host_remote, port_remote, user_remote, password_remote, database_remote, tableName_remote)
+
+    # relative_path = os.path.join(current_dir, "settingfiles/mysql_setting_local.yaml")
+    # u_ReadFiles2 = ReadFiles()
+    # u_readyaml2 = u_ReadFiles2.ReadYAML(relative_path)
+    
+    # host_local = aes.decrypt_data(u_readyaml2.get_value("host"), aes.load_key())
+    # port_local = aes.decrypt_data(u_readyaml2.get_value("port"), aes.load_key())
+    # user_local = aes.decrypt_data(u_readyaml2.get_value("user"), aes.load_key())
+    # password_local = aes.decrypt_data(u_readyaml2.get_value("password"), aes.load_key())
+    # database_local = u_readyaml2.get_value("database")
+    # tableName_local = u_readyaml2.get_value("tableName")
+
+    # print(host_local, port_local, user_local, password_local, database_local, tableName_local)
+
+    # 都需要先判断数据库
+    # dbset =  DBSetting(host, port, user, password, database)
+    # if dbset.databse_exists() == False:
+    #     dbset.create_database()
+
+    # dbtool = DBTool(host, port, user, password, database, tableName)
+
+    # 都需要先判断数据表
+    # if dbtool.table_exists() == False:
+    #     dbtool.create_table(create_table_trigger_sql)
+
+
+    # dbtool.insert_data(insert_data_query, sample_data[2])
+
+    # data = dbtool.read_all_data()
+    # print(data)
+
+    # 务必关闭
+    # dbtool.close_connection()
+
+
+    #################################Tips#################################
+    # 建表格式
     # create_table_trigger_sql = """
     # CREATE TABLE {table_name} (
     #     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -384,29 +446,10 @@ class DBTool:
     # );
     # """.format(table_name = tableName)
 
+    # 插入数据参考
     # insert_data_query = "INSERT INTO {table_name}  (name, gender, age, experiment_date, note) VALUES (%s, %s, %s, %s, %s)".format(table_name = tableName)
     # sample_data = [
     #     ("Alice", "Women", 25, "2023-08-19", "Sample note 1"),
     #     ("Bob", "Men", 30, "2023-08-20", "Sample note 2"),
     #     ("Charlie", "Others", 40, "2023-08-21", "Sample note 3"),
     # ]
-
-    # dbset =  DBSetting(host, port, user, password, database)
-    # if dbset.databse_exists() == False:
-    #     dbset.create_database()
-
-
-    # dbtool = DBTool(host, port, user, password, database, tableName)
-
-    # if dbtool.table_exists() == False:
-    #     dbtool.create_table(create_table_trigger_sql)
-    # dbtool.insert_data(insert_data_query, sample_data[2])
-
-    # data = dbtool.read_all_data()
-    # id =  get_id(data)
-    # print(id)
-
-    # data = dbtool.read_enum_count('gender', 'men')
-    # print(data)
-
-    # dbtool.close_connection()
