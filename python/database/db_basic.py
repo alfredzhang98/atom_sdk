@@ -371,13 +371,13 @@ class DBTool:
         except Exception as e:
             print("Error:", e)
 
-import os
-import sys
-from read_files import ReadFiles
-sys.path.insert(0, sys.path[0]+"\\..\\")
-from encryption.encryption_tool import EncryptionTools
+# import os
+# import sys
+# from read_files import ReadFiles
+# sys.path.insert(0, sys.path[0]+"\\..\\")
+# from encryption.encryption_tool import EncryptionTools
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
     # 读取yaml文件
     # 拿到Key进行解析
