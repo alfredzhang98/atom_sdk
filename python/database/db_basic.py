@@ -345,7 +345,7 @@ class DBTool:
             if sort_column == None or sort_order == None:
                 query = f"SELECT * FROM {self.tableName} ORDER BY {master_key} {maste_order} LIMIT {page_size} OFFSET {offset}"
             else:
-                query = f"SELECT * FROM {self.tableName} ORDER BY {sort_column} {sort_order} {master_key} {maste_order} LIMIT {page_size} OFFSET {offset}"
+                query = f"SELECT * FROM {self.tableName} ORDER BY {sort_column} {sort_order} , {master_key} {maste_order} LIMIT {page_size} OFFSET {offset}"
             self.cursor.execute(query)
             data = self.cursor.fetchall()
             return data
