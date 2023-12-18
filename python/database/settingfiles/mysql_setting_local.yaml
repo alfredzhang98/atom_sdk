@@ -1,8 +1,0 @@
-version: 0.2
-host: 'gAAAAABlNdqZ5BhbXS3kUuncVxcmNeJTsUc8MijHSpXWaH-qLgRC8ezzHIryLsFUzevGhdV8nJaIS9FvEHEnO-Y91V913JEovA=='
-localhost: 'localhost'
-port: "gAAAAABlNdqooNbpLQ2NocLNpsFt8mLb59czsA6oZ24HOu45QV04MItzvcLBYG8Ss98TpoMvb4bi2YGbE1VcLQURY0sNHfUoSQ=="
-user: 'gAAAAABlNdp6dyZKaGsQipeayIbm5ep4P3WEDd4pQbk7NIKWFgpVssLR83u2S7IJLdJkCVamjHb54spRYx-NJLYm2j66oIbG8A=='
-password: 'gAAAAABlNdppwjD4oAG6zcbW7DelDiES0wNU7oZ8HuUiXsAn7X1yIbqHkzxHLSbV1CzCr0mbgnGvQXYBEJSWIo8QF_0FSqTsqw=='
-database: 'TEST'
-tableName: 'TEST'

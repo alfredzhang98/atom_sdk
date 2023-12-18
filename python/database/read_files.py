@@ -28,11 +28,11 @@ class ReadFiles:
             else:
                 raise KeyError(f"Key not found: {key}")
 
-# if __name__ == "__main__":
-#     current_dir = os.path.dirname(__file__)
-#     relative_path = os.path.join(current_dir, "settingfiles/mysql_setting_remote.yaml")
-#     u_ReadFiles = ReadFiles()
-#     u_readyaml = u_ReadFiles.ReadYAML(relative_path)
-#     print(type(u_readyaml.get_value("host")))
-#     print(u_readyaml.get_value("password"))
-#     print(u_readyaml.get_value())
+if __name__ == "__main__":
+    current_dir = os.path.dirname(__file__)
+    relative_path = os.path.join(current_dir, "settingfiles/mysql_setting_remote.yaml")
+    u_ReadFiles = ReadFiles()
+    u_readyaml = u_ReadFiles.ReadYAML(relative_path)
+    print(type(u_readyaml.get_value("host")))
+    print(u_readyaml.get_value("password"))
+    print(u_readyaml.get_value())
