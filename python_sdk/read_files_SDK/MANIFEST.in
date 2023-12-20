@@ -1,5 +1,6 @@
 # Include the YAML configuration files from the settings directory
-recursive-include settings *.yaml
+recursive-include ReadFiles settings *.yaml
+# include read_files_SDK/ReadFiles/settings/setting.yaml
 
 # Include the README
 include README.md
