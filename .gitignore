@@ -44,3 +44,10 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Python SDK files #
+######################
+.eggs/
+*.egg-info/
+build/
+*.tar.gz

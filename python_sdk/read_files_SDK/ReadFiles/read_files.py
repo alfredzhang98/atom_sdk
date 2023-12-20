@@ -2,12 +2,29 @@ import os
 import yaml
 
 class ReadFiles:
+    """
+    A class to read various file types. Currently supports YAML files.
+    """
 
+    @staticmethod
     def print_read_supports():
-        print("YAML")
+        print("Supported file types: YAML")
 
     class ReadYAML:
-        def __init__(self, file_path):
+        """
+        Class for reading YAML files.
+        """
+
+        def __init__(self, path=None):
+            if path is None:
+                # Get the directory of the script file
+                script_dir = os.path.dirname(__file__)
+                file_name = "setting.yaml"
+                file_path = os.path.join(script_dir, "settings", file_name)
+            else:
+                # Handle both absolute and relative paths
+                file_path = os.path.abspath(path)
+
             self.file_path = file_path
             self.config = self._load_config()
 
@@ -19,7 +36,7 @@ class ReadFiles:
                 raise FileNotFoundError(f"YAML file not found: {self.file_path}")
             except yaml.YAMLError as e:
                 raise ValueError(f"Error parsing YAML file: {str(e)}")
-            
+
         def get_value(self, key=None):
             if key is None:
                 return self.config
@@ -29,10 +46,6 @@ class ReadFiles:
                 raise KeyError(f"Key not found: {key}")
 
 if __name__ == "__main__":
-    current_dir = os.path.dirname(__file__)
-    relative_path = os.path.join(current_dir, "settingfiles/mysql_setting_remote.yaml")
     u_ReadFiles = ReadFiles()
-    u_readyaml = u_ReadFiles.ReadYAML(relative_path)
-    print(type(u_readyaml.get_value("host")))
-    print(u_readyaml.get_value("password"))
+    u_readyaml = u_ReadFiles.ReadYAML()
     print(u_readyaml.get_value())
