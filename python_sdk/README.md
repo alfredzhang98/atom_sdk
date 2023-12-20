@@ -11,13 +11,13 @@
 	1. SDK
 		1. `__init__. py`
 		2. xxx. py
-	2. Data/Setting
-		1. xxx. xxx
-	3. LICENSE
-	4. MANIFEST. in
-	5. README. md
-	6. requirements. txt
-	7. setup. py
+      	3. Data/Setting
+      		1. xxx. xxx
+	2. LICENSE
+	3. MANIFEST. in
+	4. README. md
+	5. requirements. txt
+	6. setup. py
 
 >Tips: SDK name in the setup. py file should be same as the file 1 in the second level
 ## 文件准备
