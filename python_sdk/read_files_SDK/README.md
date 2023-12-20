@@ -7,4 +7,7 @@ To install the package, run the following command:
 
 cd ./dist
 pip instal *.whl
+# 一件化运行
+python setup.py bdist_wheel; pip uninstall ReadFiles -y; pip install .\dist\ReadFiles-0.0.1-py3-none-any.whl
+
 ```
