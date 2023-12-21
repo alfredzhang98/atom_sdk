@@ -175,3 +175,17 @@ class BitTreeUtils:
                 # print (level_all_order[i+1])
                 bTree_list = createBTreeStep(bTree_list, level_all_order[i], level_all_order[i+1])
             return bTree_list[0]
+        
+if  __name__ == '__main__':
+    arrayGet = BitTreeUtils.generateBitTree(10)
+    print("*****arrayGet*****")
+    print(arrayGet)
+
+    level_all_order = BitTreeUtils.getLevelAllArray(arrayGet)
+    print("*****level_all_order*****")
+    print(level_all_order)
+
+    treeGet = BTree()
+    mainTree = BitTreeUtils.createBTreeByList(level_all_order)
+    result = treeGet.binaryTreePaths(mainTree)
+    print(result)

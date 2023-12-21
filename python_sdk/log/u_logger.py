@@ -76,5 +76,4 @@ class SingletonLogging:
 
         return logger
 
-
 alfred_logger = SingletonLogging(logger_name="alfred", logfile_dir="/logs").get_logger()
