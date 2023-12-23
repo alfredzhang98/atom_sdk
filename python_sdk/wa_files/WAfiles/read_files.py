@@ -1,6 +1,7 @@
 import os
 import yaml
 import json
+import logging
 
 class ReadFiles:
     """
@@ -29,13 +30,15 @@ class ReadFiles:
                 self.create_yaml_file(self.file_path)
             
             self.yaml = self._load_yaml_from_file()
+            logging.basicConfig(level=logging.INFO)
+            self.logger = logging.getLogger(__name__)
 
         def _load_yaml_from_file(self):
             try:
                 with open(self.file_path, 'r') as yaml_file:
                     return yaml.safe_load(yaml_file)
             except Exception as e:
-                print("Error:" + str(e))
+                self.logger.error(f"Error in _load_yaml_from_file: {e}")
 
         @staticmethod
         def create_yaml_file(path, data = None, overwrite=False):
@@ -82,14 +85,14 @@ class ReadFiles:
                 self._write_yaml()
 
             except Exception as e:
-                print("Error:", e)
+                self.logger.error(f"Error in update_yaml: {e}")
 
         def _write_yaml(self):
             try:
                 with open(self.file_path, 'w') as yaml_file:
                     yaml.dump(self.yaml, yaml_file, default_flow_style=False)
             except Exception as e:
-                print("Error:", e)
+                self.logger.error(f"Error in _write_yaml: {e}")
 
         def delete_key(self, key):
             if self.path is None:
@@ -100,7 +103,7 @@ class ReadFiles:
                 with open(self.file_path, 'w') as yaml_file:
                     yaml.dump(self.yaml, yaml_file)
             else:
-                print("Error:" + "Key not found: " + key)
+                self.logger.error(f"Error: Key not found: {key}")
         
         def get_value(self, key=None):
             if key is None:
@@ -108,7 +111,7 @@ class ReadFiles:
             elif key in self.yaml:
                 return self.yaml[key]
             else:
-                print("Error:" + "Key not found: " + key)
+                self.logger.error(f"Error: Key not found: {key}")
             
     class ReadJSON:
         '''
@@ -123,6 +126,8 @@ class ReadFiles:
             self.source = source
             self.json_content = {}
             self.file_path = None
+            logging.basicConfig(level=logging.INFO)
+            self.logger = logging.getLogger(__name__)
 
             if source is None:
                 # Load the default setting.json
@@ -143,7 +148,7 @@ class ReadFiles:
                     try:
                         self.json_content = self.parse_json_string(source)
                     except Exception as e:
-                        print("Error:" + str(e))
+                        self.logger.error(f"Error in __init__: {e}")
             else:
                 raise ValueError("The source parameter must be a file path or a string in JSON format.")
 
@@ -152,11 +157,8 @@ class ReadFiles:
             try:
                 with open(self.file_path, 'r') as file:
                     return json.load(file)
-            except FileNotFoundError:
-                return {}
-            except json.JSONDecodeError as e:
-                raise ValueError(f"Unable to load JSON file: {str(e)}")
             except Exception as e:
+                self.logger.error(f"Error in _load_json_from_file: {e}")
                 raise ValueError(f"Unable to load JSON file: {str(e)}")
 
         @staticmethod
@@ -197,14 +199,14 @@ class ReadFiles:
                 if self.file_path:
                     self._write_json()
             except Exception as e:
-                    print("Error:" + str(e))
+                    self.logger.error(f"Error in update_json: {e}")
 
         def _write_json(self):
             try:
                 with open(self.file_path, 'w') as file:
                     json.dump(self.json_content, file, indent=4)
             except Exception as e:
-                print("Error:" + str(e))
+                self.logger.error(f"Error in _write_json: {e}")
 
         def delete_key(self, key):
             """
@@ -224,7 +226,7 @@ class ReadFiles:
                     # print(f"The key '{key}' does not exist in JSON.")
                     pass
             except Exception as e:
-                    print("Error:" + str(e))
+                    self.logger.error(f"Error in delete_key: {e}")
 
         def get_value(self, key=None):
             if key is None:

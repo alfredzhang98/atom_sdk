@@ -7,7 +7,8 @@ To install the package, run the following command:
 
 cd ./dist
 pip instal *.whl
-# 一件化运行
+# 一键运行
+cd {project_files_path}
 python setup.py bdist_wheel; pip uninstall WAfiles -y; pip install .\dist\WAfiles-0.0.1-py3-none-any.whl
 
 ```
