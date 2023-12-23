@@ -9,6 +9,6 @@ cd ./dist
 pip instal *.whl
 # 一键运行
 cd {project_files_path}
-python setup.py bdist_wheel; pip uninstall WAdatabase -y; pip install .\dist\WAdatabase-0.0.1-py3-none-any.whl
+python setup.py bdist_wheel; pip uninstall WAdatabase -y; pip install ./dist/WAdatabase-0.0.1-py3-none-any.whl
 
 ```
