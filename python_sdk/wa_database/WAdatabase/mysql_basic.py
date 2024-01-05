@@ -62,9 +62,12 @@ class MysqlBaseHandler:
         Create a new database with the name specified in the class constructor.
         '''
         try:
+            self._start_transaction()
             self.cursor.execute(f"CREATE DATABASE {self.database}")
+            self._commit_transaction()
             print(f"Database '{self.database}' created successfully.")
         except Exception as e:
+            self._rollback_transaction() 
             self.logger.error(f"Error in create_database: {e}")
 
     def delete_database(self):
@@ -72,9 +75,12 @@ class MysqlBaseHandler:
         Delete the database specified in the class constructor.
         '''
         try:
+            self._start_transaction()
             self.cursor.execute(f"DROP DATABASE {self.database}")
+            self._commit_transaction()
             print(f"Database '{self.database}' deleted successfully.")
         except Exception as e:
+            self._rollback_transaction() 
             self.logger.error(f"Error in delete_database: {e}")
     
     def list_databases(self):
@@ -104,6 +110,25 @@ class MysqlBaseHandler:
         except Exception as e:
             self.logger.error(f"Error in close_connection: {e}")
 
+    # Transaction processing function
+    def _start_transaction(self):
+        try:
+            self.connection.begin()
+        except Exception as e:
+            print("Error:", e)
+
+    def _commit_transaction(self):
+        try:
+            self.connection.commit()
+        except Exception as e:
+            print("Error:", e)
+
+    def _rollback_transaction(self):
+        try:
+            self.connection.rollback()
+        except Exception as e:
+            print("Error:", e)
+
 class MysqlTableHandler:
     def __init__(self, host, port, user, password, database, tableName):
         '''
@@ -128,6 +153,12 @@ class MysqlTableHandler:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
+    def get_database_name(self):
+        return self.database
+
+    def get_table_name(self):
+        return self.tableName
+
     def _get_connection(self, host, port, user, password, database):
         if port != None:
             conn= pymysql.connect(host=host, 
@@ -146,13 +177,39 @@ class MysqlTableHandler:
         cursor = self.connection.cursor()
         return cursor
             
-    def table_exists(self):
+    def close_connection(self):
+        '''
+        Close the database connection and cursor.
+        Overrides the method from MysqlBaseHandler.
+        '''
+        try:
+            if self.cursor:
+                self.cursor.close()
+                self.cursor = None
+            if self.connection:
+                self.connection.close()
+                self.connection = None
+        except Exception as e:
+            self.logger.error(f"Error in close_connection: {e}")
+
+    def reconnect(self):
+        '''
+        Reconnect to the database. Useful if the connection was lost.
+        '''
+        try:
+            self.connection = self._get_connection(self.host, self.port, self.user, self.password, self.database)
+            self.cursor = self._get_cursor()
+        except Exception as e:
+            self.logger.error(f"Error in reconnect: {e}")
+
+    # table control
+    def table_exists(self, tableName):
         '''
         Check if the specified table exists in the database.
         Returns True if the table exists, False otherwise.
         '''
         try:
-            self.cursor.execute(f"SHOW TABLES LIKE '{self.tableName}'")
+            self.cursor.execute(f"SHOW TABLES LIKE '{tableName}'")
             result = self.cursor.fetchone()
             return result is not None
         except Exception as e:
@@ -164,6 +221,19 @@ class MysqlTableHandler:
         Create a table in the database using the provided SQL command.
         Parameter:
         - sql: A string containing the SQL command to create the table.
+        - example: A father table and a son table
+        CREATE TABLE orders (
+            order_id INT PRIMARY KEY,
+            order_date DATE,
+            customer_id INT
+        );
+        CREATE TABLE order_items (
+            item_id INT PRIMARY KEY,
+            order_id INT,
+            product_id INT,
+            quantity INT,
+            FOREIGN KEY (order_id) REFERENCES orders(order_id)
+        );
         '''
         try:
             self._start_transaction()
@@ -202,31 +272,6 @@ class MysqlTableHandler:
         except Exception as e:
             self.logger.error(f"Error in list_tables: {e}")
   
-    def close_connection(self):
-        '''
-        Close the database connection and cursor.
-        Overrides the method from MysqlBaseHandler.
-        '''
-        try:
-            if self.cursor:
-                self.cursor.close()
-                self.cursor = None
-            if self.connection:
-                self.connection.close()
-                self.connection = None
-        except Exception as e:
-            self.logger.error(f"Error in close_connection: {e}")
-
-    def reconnect(self):
-        '''
-        Reconnect to the database. Useful if the connection was lost.
-        '''
-        try:
-            self.connection = self._get_connection(self.host, self.port, self.user, self.password, self.database)
-            self.cursor = self._get_cursor()
-        except Exception as e:
-            self.logger.error(f"Error in reconnect: {e}")
-
     # Transaction processing function
     def _start_transaction(self):
         try:
@@ -246,7 +291,7 @@ class MysqlTableHandler:
         except Exception as e:
             print("Error:", e)
 
-    # basic sql
+    # basic sql control
     def user_execute_free(self, sql, is_select=False):
         '''
         Execute a free-form SQL query. The method can handle both read and write operations.
@@ -387,7 +432,138 @@ class MysqlTableHandler:
             self._rollback_transaction()
             self.logger.error(f"Error in update_data: {e}")
 
+    def column_exists(self, tableName, columnName):
+        '''
+        Check if a specific column exists in the table.
+        Parameters:
+        - tableName: Name of the table to check.
+        - columnName: Name of the column to check.
+        '''
+        try:
+            sql = f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s"
+            params = (self.database, tableName, columnName)
+            self.cursor.execute(sql, params)
+            result = self.cursor.fetchone()
+            if result[0] > 0:
+                print(f"Column '{columnName}' exists in table '{tableName}'.")
+                return True
+            else:
+                print(f"Column '{columnName}' does not exist in table '{tableName}'.")
+                return False
+        except Exception as e:
+            self.logger.error(f"Error in check_column_exists: {e}")
+
+    def column_type(self, tableName, columnName):
+        '''
+        Get the type of a column in the table.
+        Parameter:
+        - columnName: Name of the column.
+        '''
+        try:
+            sql = f"SHOW COLUMNS FROM {tableName} LIKE '{columnName}'"
+            self.cursor.execute(sql)
+            result = self.cursor.fetchone()
+            if result:
+                return result[1]
+            else:
+                return None
+        except Exception as e:
+            self.logger.error(f"Error in get_column_type: {e}")
+
+    def column_generate_default_data(self, columnType):
+        '''
+        Generate a default value for a given column type.
+        Parameter:
+        - columnType: The type of the column.
+        Returns:
+        - A default value for the column type.
+        '''
+        if "int" in columnType:
+            return 0
+        elif "varchar" in columnType or "text" in columnType:
+            return "''"
+        elif "date" in columnType:
+            return "'0000-00-00'"
+        elif "datetime" in columnType or "timestamp" in columnType:
+            return "'0000-00-00 00:00:00'"
+        elif "float" in columnType or "double" in columnType or "decimal" in columnType:
+            return 0.0
+        elif "bool" in columnType:
+            return False
+        else:
+            return "NULL"
+
+    def add_column(self, columnName, columnType):
+        '''
+        Add a column to the table.
+        Parameters:
+        - columnName: Name of the column to add.
+        - columnType: Type of the column to add (e.g., 'VARCHAR(100)', 'INT', 'DATE', etc.).
+        '''
+        try:
+            self._start_transaction()
+            sql = f"ALTER TABLE {self.tableName} ADD COLUMN {columnName} {columnType}"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Column '{columnName}' added successfully.")
+        except Exception as e:
+            self._rollback_transaction()
+            self.logger.error(f"Error in add_column: {e}")
+
+    def add_column_with_default(self, columnName, columnType, defaultValue):
+        '''
+        Add a column to the table with a default value.
+        Parameters:
+        - columnName: Name of the column to add.
+        - columnType: Type of the column to add (e.g., 'VARCHAR(100)', 'INT', 'DATE', etc.).
+        - defaultValue: Default value for the column.
+        '''
+        try:
+            self._start_transaction()
+            sql = f"ALTER TABLE {self.tableName} ADD COLUMN {columnName} {columnType} DEFAULT {defaultValue}"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Column '{columnName}' added successfully with default value '{defaultValue}'.")
+        except Exception as e:
+            self._rollback_transaction()
+            self.logger.error(f"Error in add_column_with_default: {e}")
+
+    def delete_column(self, columnName):
+        '''
+        Delete a column from the table.
+        Parameter:
+        - columnName: Name of the column to delete.
+        '''
+        try:
+            self._start_transaction()
+            sql = f"ALTER TABLE {self.tableName} DROP COLUMN {columnName}"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Column '{columnName}' deleted successfully.")
+        except Exception as e:
+            self._rollback_transaction()
+            self.logger.error(f"Error in delete_column: {e}")
+
     # accurate read
+    # if the key is id number
+    def get_unique_id(self, field, target) -> int:
+        '''
+        Get the unique ID of a row based on a field match.
+        Parameters:
+        - field: The column to perform the search on.
+        - target: The value to search for in the field.
+        '''
+        try:
+            self.cursor.execute(f"SELECT unique_id FROM {self.tableName} WHERE {field} = '{target}'")
+            data = self.cursor.fetchone()
+            if data is not None:
+                return data[0]
+            else:
+                return None
+        except Exception as e:
+            self.logger.error(f"Error in get_unique_id: {e}")
+            return None        
+
     def read_latest_line(self):
         '''
         Read the latest line (most recent entry) from the table.
@@ -776,3 +952,127 @@ class MysqlTableHandler:
             self.logger.error(f"Error in execute_stored_procedure: {e}")
             return None, None
 
+    # advanced utils
+    # index the form
+    def create_index(self, columnName):
+        '''
+        Create an index on the specified column in the table.
+        Parameter:
+        - column_name: Name of the column to create an index on.
+        - boost search like this: SELECT * FROM users WHERE email = 'test@example.com';
+        '''
+        try:
+            self._start_transaction()
+            sql = f"CREATE INDEX idx_{self.tableName}_{columnName} ON {self.tableName}({columnName})"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Index created successfully on column '{columnName}'")
+        except Exception as e:
+            self._rollback_transaction() 
+            self.logger.error(f"Error in create_index: {e}")
+
+    def create_fulltext_index(self, columnNames):
+        '''
+        Create a fulltext index on the specified columns in the table.
+        Parameters:
+        - columnNames: List of column names to create a fulltext index on.
+        - example: create_fulltext_index(['name', 'age'])
+        '''
+        try:
+            self._start_transaction()
+            columns = ", ".join(columnNames)
+            sql = f"CREATE FULLTEXT INDEX ft_idx_{self.tableName}_{'_'.join(columnNames)} ON {self.tableName}({columns})"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Fulltext index created successfully on columns '{columns}'")
+        except Exception as e:
+            self._rollback_transaction() 
+            self.logger.error(f"Error in create_fulltext_index: {e}")
+
+    def read_fulltext(self, columnNames, search_term):
+        '''
+        Perform a fulltext search on the specified columns in the table.
+        Parameters:
+        - columnNames: List of column names to perform the search on.
+        - search_term: The term to search for. Fuzzy search.
+        - example: fulltext_search('articles', ['title', 'content'], 'machine learning')
+        '''
+        try:
+            self._start_transaction()
+            columns = ", ".join(columnNames)
+            sql = f"SELECT * FROM {self.tableName} WHERE MATCH({columns}) AGAINST(%s)"
+            self.cursor.execute(sql, (search_term,))
+            results = self.cursor.fetchall()
+            self._commit_transaction()
+            return results
+        except Exception as e:
+            self._rollback_transaction() 
+            self.logger.error(f"Error in fulltext_search: {e}")
+
+
+    # join different table
+    def join_tables_on_field(self, other_table, field):
+        '''
+        Join this table with another table based on a common field.
+        Parameters:
+        - other_table: The name of the other table to join with.
+        - field: The column to perform the join on.
+        '''
+        try:
+            self.cursor.execute(f"SELECT * FROM {self.tableName} INNER JOIN {other_table} ON {self.tableName}.{field} = {other_table}.{field}")
+            data = self.cursor.fetchall()
+            return data
+        except Exception as e:
+            self.logger.error(f"Error in join_tables_on_field: {e}")
+            return None
+        
+    def join_tables_on_field_and_target(self, other_table, field, target):
+        '''
+        Join this table with another table based on a common field and target value.
+        Parameters:
+        - other_table: The name of the other table to join with.
+        - field: The column to perform the join on.
+        - target: The value to search for in the field.
+        '''
+        try:
+            self.cursor.execute(f"SELECT * FROM {self.tableName} INNER JOIN {other_table} ON {self.tableName}.{field} = {other_table}.{field} WHERE {self.tableName}.{field} = '{target}'")
+            data = self.cursor.fetchall()
+            return data
+        except Exception as e:
+            self.logger.error(f"Error in join_tables_on_field_and_target: {e}")
+            return None
+
+    # external key
+    # The external key of the child table is associated with the primary key of the parent table.
+    
+    # Read IT!!!
+    # Suppose we have two tables, orders and customers. the orders table has a customer_id column, and we want to create a foreign key constraint so that the customer_id column in the orders table references the id column in the customers table.
+    
+    # After creating a foreign key, the value of the customer_id column in the orders table must exist in the id column of the customers table. 
+    # If there is a customer_id value in the orders table that does not exist in the id column of the customers table, then the creation of the foreign key will result in an error. 
+    # In this example, let's assume that the row in the orders table with a customer_id value of 3 was deleted before the foreign key was created.
+    
+    # After creating the foreign key, if you try to insert a new row into the orders table with a customer_id value that does not exist in the id column of the customers table, 
+    # the insertion fails and an error is reported. Similarly, if you try to delete a row in the customers table and there is another row in the orders table whose customer_id column has a value equal to the id value of the customers table row, 
+    # then the delete operation fails and an error is reported. This is what foreign key constraints are for: to ensure data consistency and integrity.
+    def create_foreign_key(self, tableName, columnName, referencedTable, referencedColumn):
+        '''
+        Create a foreign key on the specified column in the table. The same database
+        Parameters:
+        - tableName: Name of the son table
+        - columnName: Name of the column to create a foreign key on. columnName shoule be already exist.
+        - referencedTable: The table that the foreign key references.
+        - referencedColumn: The column in the referenced table that the foreign key points to.
+        '''
+        try:
+            if not self.column_exists(self.database, tableName, columnName):
+                column_type = self.column_type(referencedTable, referencedColumn)
+                self.add_column_with_default(columnName, column_type, self.column_generate_default_data(column_type))
+            self._start_transaction()
+            sql = f"ALTER TABLE {tableName} ADD CONSTRAINT fk_{tableName}_{columnName} FOREIGN KEY ({columnName}) REFERENCES {referencedTable}({referencedColumn})"
+            self.cursor.execute(sql)
+            self._commit_transaction()
+            print(f"Foreign key created successfully on column '{columnName}' referencing '{referencedColumn}' in table '{referencedTable}'")
+        except Exception as e:
+            self._rollback_transaction() 
+            self.logger.error(f"Error in create_foreign_key: {e}")
