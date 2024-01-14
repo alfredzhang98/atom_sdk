@@ -222,12 +222,12 @@ class MysqlTableHandler:
         Parameter:
         - sql: A string containing the SQL command to create the table.
         - example: A father table and a son table
-        CREATE TABLE orders (
+        CREATE TABLE IF NOT EXISTS orders (
             order_id INT PRIMARY KEY,
             order_date DATE,
             customer_id INT
         );
-        CREATE TABLE order_items (
+        CREATE TABLE IF NOT EXISTS order_items (
             item_id INT PRIMARY KEY,
             order_id INT,
             product_id INT,
@@ -318,7 +318,7 @@ class MysqlTableHandler:
             self.logger.error(f"Error in user_execute_free: {e}")
             return None
 
-    def insert_data(self, data):
+    def insert_data(self, data) -> bool:
         '''
         Insert data into the table.
         Parameters:
@@ -340,10 +340,12 @@ class MysqlTableHandler:
             self._start_transaction()
             self.cursor.execute(sql, tuple(data.values()))
             self._commit_transaction()
-            print(f"Success insert: {data}")
+            # print(f"Success insert: {data}")
+            return True
         except Exception as e:
             self._rollback_transaction() 
             self.logger.error(f"Error in insert_data: {e}")
+            return False
 
     def bulk_insert_data(self, data_query, data_list):
         '''
@@ -590,6 +592,29 @@ class MysqlTableHandler:
             return data
         except Exception as e:
             self.logger.error(f"Error in read_content_row: {e}")
+            return None
+
+    def read_muti_content_row(self, fields, targets):
+        '''
+        Read rows from the table where specific fields match their corresponding target values.
+        Parameters:
+        - fields: A list of columns to match dict.
+        - targets: A list of values to match in the corresponding fields dict.
+        '''
+        try:
+            # sql
+            sql = f"SELECT * FROM {self.tableName} WHERE "
+            
+            # where
+            conditions = [f"{field} = '{target}'" for field, target in zip(fields, targets)]
+            where_clause = " AND ".join(conditions)
+            sql += where_clause
+            
+            self.cursor.execute(sql)
+            data = self.cursor.fetchall()
+            return data
+        except Exception as e:
+            self.logger.error(f"Error in read_muti_content_row: {e}")
             return None
 
     def num_content_row(self, field, target):
@@ -978,16 +1003,25 @@ class MysqlTableHandler:
         - columnNames: List of column names to create a fulltext index on.
         - example: create_fulltext_index(['name', 'age'])
         '''
-        try:
-            self._start_transaction()
-            columns = ", ".join(columnNames)
-            sql = f"CREATE FULLTEXT INDEX ft_idx_{self.tableName}_{'_'.join(columnNames)} ON {self.tableName}({columns})"
-            self.cursor.execute(sql)
-            self._commit_transaction()
-            print(f"Fulltext index created successfully on columns '{columns}'")
-        except Exception as e:
-            self._rollback_transaction() 
-            self.logger.error(f"Error in create_fulltext_index: {e}")
+        # check fulltext
+        index_name = f"ft_idx_{self.tableName}_{'_'.join(columnNames)}"
+        query = f"SHOW INDEX FROM {self.tableName} WHERE Key_name = '{index_name}'"
+        self.cursor.execute(query)
+        existing_index = self.cursor.fetchone()
+
+        if existing_index:
+            print(f"FULLTEXT index '{index_name}' already exists")
+        else:
+            try:
+                self._start_transaction()
+                columns = ", ".join(columnNames)
+                sql = f"CREATE FULLTEXT INDEX {index_name} ON {self.tableName}({columns})"
+                self.cursor.execute(sql)
+                self._commit_transaction()
+                print(f"Fulltext index created successfully on columns '{columns}'")
+            except Exception as e:
+                self._rollback_transaction()
+                self.logger.error(f"Error in create_fulltext_index: {e}")
 
     def read_fulltext(self, columnNames, search_term):
         '''
@@ -995,7 +1029,7 @@ class MysqlTableHandler:
         Parameters:
         - columnNames: List of column names to perform the search on.
         - search_term: The term to search for. Fuzzy search.
-        - example: fulltext_search('articles', ['title', 'content'], 'machine learning')
+        - example: read_fulltext('articles', ['title', 'content'], 'machine learning')
         '''
         try:
             self._start_transaction()
@@ -1007,7 +1041,7 @@ class MysqlTableHandler:
             return results
         except Exception as e:
             self._rollback_transaction() 
-            self.logger.error(f"Error in fulltext_search: {e}")
+            self.logger.error(f"Error in read_fulltext: {e}")
 
 
     # join different table
