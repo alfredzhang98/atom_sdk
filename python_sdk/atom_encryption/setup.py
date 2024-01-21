@@ -10,7 +10,7 @@ def read(fname):
         return "Long description not available"
 
 setup(
-    name="WAdatabase",
+    name="AtomEncryption",
     version="0.0.1",
     author="alfred",
     author_email="alfred.zhang98@gmail.com",
@@ -40,6 +40,7 @@ setup(
     python_requires='>=3.6',
     include_package_data=True,
     install_requires=[
-        'pymysql>=1.1',
+        'cryptography',
+        'bcrypt',
     ],
 )
