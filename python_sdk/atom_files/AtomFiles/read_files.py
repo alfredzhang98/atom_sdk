@@ -433,6 +433,7 @@ class ReadFiles:
             other_df = pd.read_excel(other_file)
             self.df = pd.merge(self.df, other_df, on=on, how=merge_type)
         
+        # Read sth
         def read_column_to_dict(self, column_identifier):
             """
             Read a specific column and return its content as a dictionary.
