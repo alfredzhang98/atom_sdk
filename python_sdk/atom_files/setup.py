@@ -10,7 +10,7 @@ def read(fname):
         return "Long description not available"
 
 setup(
-    name="WAfiles",
+    name="AtomFiles",
     version="0.0.1",
     author="alfred",
     author_email="alfred.zhang98@gmail.com",
@@ -44,6 +44,8 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        'pyyaml>=5.4',
+        'pyyaml',
+        'cryptography',
+        'pandas',
     ],
 )
