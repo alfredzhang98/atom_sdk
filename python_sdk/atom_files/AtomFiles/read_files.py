@@ -432,3 +432,27 @@ class ReadFiles:
             """
             other_df = pd.read_excel(other_file)
             self.df = pd.merge(self.df, other_df, on=on, how=merge_type)
+        
+        def read_column_to_dict(self, column_identifier):
+            """
+            Read a specific column and return its content as a dictionary.
+            :param column_identifier: Can be a column index (int) or a column name (str).
+            """
+            if isinstance(column_identifier, int):
+                return dict(self.df.iloc[:, column_identifier])
+            elif isinstance(column_identifier, str):
+                return dict(self.df[column_identifier])
+            else:
+                raise ValueError("Column identifier must be an integer or a string")
+
+        def read_row_to_dict(self, row_identifier):
+            """
+            Read a specific row and return its content as a dictionary.
+            :param row_identifier: Can be a row index (int) or a row header (str).
+            """
+            if isinstance(row_identifier, int):
+                return dict(self.df.iloc[row_identifier])
+            elif isinstance(row_identifier, str):
+                return dict(self.df.loc[row_identifier])
+            else:
+                raise ValueError("Row identifier must be an integer or a string")
