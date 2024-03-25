@@ -6,7 +6,7 @@ To install the package, run the following command:
 ```bash
 
 cd ./dist
-pip instal *.whl
+pip install *.whl
 # 一键运行
 cd {project_files_path}
 python setup.py bdist_wheel; pip uninstall AtomFiles -y; pip install ./dist/AtomFiles-0.0.1-py3-none-any.whl

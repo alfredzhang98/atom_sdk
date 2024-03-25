@@ -14,7 +14,7 @@ setup(
     version="0.0.1",
     author="alfred",
     author_email="alfred.zhang98@gmail.com",
-    description="A package for reading different kinds of database",
+    description="A package for encryption",
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     url="https://github.com/alfredzhang98/atom_sdk.git",

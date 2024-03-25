@@ -1,6 +1,6 @@
 # Include the YAML configuration files from the settings directory
-recursive-include WAfiles settings *.yaml
-recursive-include WAfiles settings *.json
+recursive-include AtomFiles settings *.yaml
+recursive-include AtomFiles settings *.json
 
 # Include the README
 include README.md
