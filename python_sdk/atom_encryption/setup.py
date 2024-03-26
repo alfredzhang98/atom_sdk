@@ -37,7 +37,11 @@ setup(
         # Intended Audience :: Science/Research
         # Topic :: Scientific/Engineering
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.9',
+    # Include any package inside your package containing *.yaml and *.json files
+    # package_data={
+    #     '': ['settings/*.yaml', 'settings/*.json'],  # Adjust the pattern to match where your json files are.
+    # },
     include_package_data=True,
     install_requires=[
         'cryptography',

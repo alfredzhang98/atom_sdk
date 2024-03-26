@@ -417,7 +417,6 @@ class ReversibleEncryptionTools:
             decryptor = cipher.decryptor()
             return decryptor.update(encrypted_data) + decryptor.finalize()
 
-class IrreversibleEncryptionTools:
 
     class Hash:
         '''
@@ -436,7 +435,7 @@ class IrreversibleEncryptionTools:
             Hash the data with specified algorithm and an optional salt.
             Supported algorithms: 'sha256', 'sha512', 'md5', 'bcrypt'.
             """
-            if algorithm in ['sha256', 'sha512', 'md5']:
+            if algorithm in ['sha1', 'sha256', 'sha512', 'md5']:
                 hash_object = hashlib.new(algorithm)
                 if salt:
                     hash_object.update(salt.encode() + data.encode())
