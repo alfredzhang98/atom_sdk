@@ -6,7 +6,7 @@ Atom Encryption is a comprehensive Python library that provides tools for both r
 
 # CHANGELOG
 
-## [1.2.0] - 20924/12/27
+## [1.2.0] - 2024/12/27
 ### Added
 - **Type Encoding and Decoding Tools**:
   - Added `TypeEncodeDecodeTools` class with various utility methods:

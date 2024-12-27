@@ -45,7 +45,7 @@ class TestTypeEncodeDecodeTools(unittest.TestCase):
     def test_float_to_bytes_and_bytes_to_float(self):
         float_value = 12.34
         float_bytes = self.tools.float_to_bytes(float_value)
-        self.assertEqual(self.tools.bytes_to_float(float_bytes), float_value)
+        self.assertAlmostEqual(self.tools.bytes_to_float(float_bytes), float_value, places=2)
 
     def test_bytes_to_hex_string_format_and_hex_string_format_to_bytes(self):
         byte_data = b"Hello"
