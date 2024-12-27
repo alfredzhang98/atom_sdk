@@ -35,6 +35,14 @@ class TestErrorDetectionTools(unittest.TestCase):
         # Test with incorrect parity bit
         self.assertFalse(ErrorDetectionTools.Parity.verify(self.data, parity_even ^ 0x1, even_parity=True))
 
+    def test_sum(self):
+        # Generate SUM
+        sum_ = ErrorDetectionTools.SUM.generate(self.data)
+        # Verify SUM
+        self.assertTrue(ErrorDetectionTools.SUM.verify(self.data, sum_))
+        # Test with wrong checksum
+        self.assertFalse(ErrorDetectionTools.SUM.verify(self.data, sum_ ^ 0xFF))
+
     def test_lrc(self):
         # Generate LRC
         lrc = ErrorDetectionTools.LRC.generate(self.data)

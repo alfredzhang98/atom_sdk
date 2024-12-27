@@ -1,5 +1,4 @@
 include LICENSE
 include README.md
 recursive-include atom_encryption *.py
-recursive-include test *.py
 global-exclude __pycache__ *.pyc

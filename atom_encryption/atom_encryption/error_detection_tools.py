@@ -10,10 +10,11 @@ class ErrorDetectionTools:
         Print the supported error detection algorithms.
         """
         print("Supported Error Detection Algorithms:")
-        print("1. BCC (Block Check Character)")
-        print("2. CRC (Cyclic Redundancy Check)")
-        print("3. Parity Check (Even and Odd Parity)")
-        print("4. LRC (Longitudinal Redundancy Check)")
+        print("1. BCC (Block Check Character), 1 byte return value, now return int value")
+        print("2. CRC (Cyclic Redundancy Check), 2 or 4 byte return value, now return int value")
+        print("3. Parity Check (Even and Odd Parity), one bit return value, 0 or 1, now return int value")
+        print("4. SUM (Summation Checksum), 1 byte return value, now return int value")
+        print("5. LRC (Longitudinal Redundancy Check), 1 byte return value, now return int value")
 
 
     class BCC:
@@ -118,6 +119,33 @@ class ErrorDetectionTools:
                 bool: True if valid, False otherwise.
             """
             return ErrorDetectionTools.Parity.generate(data, even_parity) == parity_bit
+        
+    class SUM:
+        """
+        SUM (Summation) checksum.
+        """
+        @staticmethod
+        def generate(data: bytes) -> int:
+            """
+            Generate SUM checksum for the given data.
+            Args:
+                data (bytes): Input data as bytes.
+            Returns:
+                int: SUM checksum value.
+            """
+            return sum(data) & 0xFF
+
+        @staticmethod
+        def verify(data: bytes, checksum: int) -> bool:
+            """
+            Verify if the SUM checksum matches the data.
+            Args:
+                data (bytes): Input data as bytes.
+                checksum (int): SUM checksum to verify against.
+            Returns:
+                bool: True if valid, False otherwise.
+            """
+            return ErrorDetectionTools.SUM.generate(data) == checksum
 
     class LRC:
         """
@@ -155,16 +183,30 @@ if __name__ == "__main__":
 
     # BCC Example
     bcc = ErrorDetectionTools.BCC.generate(data)
+    print(bcc)
     print(f"BCC: {bcc}, Verified: {ErrorDetectionTools.BCC.verify(data, bcc)}")
 
     # CRC Example (CRC-16-CCITT)
     crc16 = ErrorDetectionTools.CRC.generate(data, polynomial=0x1021, width=16, init_value=0xFFFF)
+    print(crc16)
     print(f"CRC-16: {crc16}, Verified: {ErrorDetectionTools.CRC.verify(data, crc16, polynomial=0x1021, width=16, init_value=0xFFFF)}")
+
+    # CRC 32 Example (CRC-32)
+    crc32 = ErrorDetectionTools.CRC.generate(data, polynomial=0x04C11DB7, width=32, init_value=0xFFFFFFFF)
+    print(crc32)
+    print(f"CRC-32: {crc32}, Verified: {ErrorDetectionTools.CRC.verify(data, crc32, polynomial=0x04C11DB7, width=32, init_value=0xFFFFFFFF)}")
 
     # Parity Example
     parity = ErrorDetectionTools.Parity.generate(data, even_parity=True)
+    print(parity)
     print(f"Parity Bit: {parity}, Verified: {ErrorDetectionTools.Parity.verify(data, parity, even_parity=True)}")
+
+    # SUM Example
+    sum_ = ErrorDetectionTools.SUM.generate(data)
+    print(sum_)
+    print(f"SUM: {sum_}, Verified: {ErrorDetectionTools.SUM.verify(data, sum_)}")
 
     # LRC Example
     lrc = ErrorDetectionTools.LRC.generate(data)
+    print(lrc)
     print(f"LRC: {lrc}, Verified: {ErrorDetectionTools.LRC.verify(data, lrc)}")

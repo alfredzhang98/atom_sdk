@@ -4,11 +4,30 @@ Atom Encryption is a comprehensive Python library that provides tools for both r
 
 ---
 
+# CHANGELOG
+
+## [1.2.0] - 20924/12/27
+### Added
+- **Type Encoding and Decoding Tools**:
+  - Added `TypeEncodeDecodeTools` class with various utility methods:
+    - `int_list_to_str` and `str_to_int_list`: Convert between integer lists and strings.
+    - `float_to_bytes` and `bytes_to_float`: Convert between floats and bytes.
+    - `hex_string_format_to_bytes` and `bytes_to_hex_string_format`: Handle hex string and byte conversions.
+    - `int_to_int_list` and `int_list_to_int`: Convert integers to byte lists with MSB/LSB ordering and back.
+    - Other similar encoding/decoding tools.
+- Comprehensive unit tests for the new `TypeEncodeDecodeTools` in `test_type_encode_decode_tools.py`.
+
+### Fixed
+- None
+
+---
+
 ## Features
 
 - **Error Detection Tools**: Implementations of BCC, CRC, Parity Check, and LRC for data integrity checks.
 - **Irreversible Encryption**: Secure hashing algorithms like SHA-256, SHA-512, and bcrypt.
 - **Reversible Encryption**: Symmetric and asymmetric encryption algorithms including AES, Twofish, RSA, and ECC.
+- **Type Encoding and Decoding**: Tools for type conversion and encoding/decoding operations, such as integer-to-string, hex-to-bytes, and more.
 
 ---
 
@@ -31,6 +50,40 @@ pip install .
 ---
 
 ## Usage
+
+### Type Encode Decode Tools
+
+The `TypeEncodeDecodeTools` module provides utilities for various type conversions, such as integer lists to strings, bytes to floats, and more.
+
+```python
+from atom_encryption.type_encode_decode_tools import TypeEncodeDecodeTools
+
+tools = TypeEncodeDecodeTools()
+
+# Example 1: Integer list to string and back
+int_list = [72, 101, 108, 108, 111]
+string = tools.int_list_to_str(int_list)
+print("String:", string)  # Output: "Hello"
+print("Back to Integer List:", tools.str_to_int_list(string))  # Output: [72, 101, 108, 108, 111]
+
+# Example 2: Float to bytes and back
+float_value = 12.34
+float_bytes = tools.float_to_bytes(float_value)
+print("Bytes:", float_bytes)
+print("Float:", tools.bytes_to_float(float_bytes))
+
+# Example 3: Hex string format to bytes
+byte_data = b"Hello"
+formatted_hex = tools.bytes_to_hex_string_format(byte_data)
+print("Hex String Format:", formatted_hex)  # Output: "\x48\x65\x6c\x6c\x6f"
+print("Bytes:", tools.hex_string_format_to_bytes(formatted_hex))  # Output: b"Hello"
+
+# Example 4: Integer to integer list with MSB ordering
+integer_value = 123456
+int_list = tools.int_to_int_list(integer_value, specified_length=4, order="msb")
+print("Integer List (MSB):", int_list)  # Output: [0, 1, 226, 64]
+print("Back to Integer:", tools.int_list_to_int(int_list, "msb"))  # Output: 123456
+```
 
 ### Error Detection Tools
 
@@ -85,7 +138,8 @@ pip install -r requirements.txt
 
 ### Running Tests
 
-To run unit tests, use:
+To run the test, please clone the Github project and run the could below:
+Github link: [atom_encryption](https://github.com/alfredzhang98/atom_sdk/tree/master/atom_encryption)
 
 ```bash
 python -m unittest discover test
